@@ -133,7 +133,7 @@ static NSString *getValue(NSString *key) {
 static void writeSelectedNetwork() {
   [prefs setObject:selectedNetwork forKey:@"selectedNetwork"];
   [prefs writeToFile:
-             @"/var/mobile/Library/Preferences/me.nixuge.networkmanager.plist"
+             jbroot(@"/var/mobile/Library/Preferences/me.nixuge.networkmanager.plist")
           atomically:YES];
 }
 
@@ -141,8 +141,8 @@ static void writeSelectedNetwork() {
 
 static void loadPrefs() {
   prefs = [[NSMutableDictionary alloc]
-      initWithContentsOfFile:@"/var/mobile/Library/Preferences/"
-                             @"me.nixuge.networkmanager.plist"];
+      initWithContentsOfFile:jbroot(@"/var/mobile/Library/Preferences/"
+                             @"me.nixuge.networkmanager.plist")];
   selectedNetwork = [[prefs objectForKey:@"selectedNetwork"]?: [defaultPrefs objectForKey:@"selectedNetwork"] stringValue];
 }
 
@@ -150,7 +150,7 @@ static void initPrefs() {
   // Copy the default preferences file when the actual preference file doesn't
   // exist
   NSString *path =
-      @"/var/mobile/Library/Preferences/me.nixuge.networkmanager.plist";
+      jbroot(@"/var/mobile/Library/Preferences/me.nixuge.networkmanager.plist");
   NSString *pathDefault =
       jbroot(@"/Library/PreferenceBundles/NetworkManagerPrefs.bundle/defaults.plist");
   NSFileManager *fileManager = [NSFileManager defaultManager];
