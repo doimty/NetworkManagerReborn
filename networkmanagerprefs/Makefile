@@ -1,7 +1,8 @@
 include $(THEOS)/makefiles/common.mk
 
-export TARGET = iphone:clang:11.2:11.0
-export ARCHS = arm64 arm64e
+export TARGET = iphone:clang:latest:11.0
+export ARCHS = arm64e
+export THEOS_PACKAGE_SCHEME = roothide
 export VERSION = $(shell grep '^Version:' ../control | cut -d: -f2- | tr -d ' ')
 
 BUNDLE_NAME = NetworkManagerPrefs
@@ -11,6 +12,7 @@ NetworkManagerPrefs_INSTALL_PATH = /Library/PreferenceBundles
 NetworkManagerPrefs_FRAMEWORKS = UIKit
 NetworkManagerPrefs_PRIVATE_FRAMEWORKS = Preferences
 NetworkManagerPrefs_CFLAGS = -fobjc-arc
+NetworkManagerPrefs_LDFLAGS += -undefined dynamic_lookup
 
 NetworkManagerPrefs_CFLAGS += -DNETWORK_MANAGER_VERSION=\"$(VERSION)\"
 
