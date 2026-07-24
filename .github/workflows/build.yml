@@ -10,7 +10,7 @@ jobs:
         os: [macos-latest]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
 
@@ -20,7 +20,7 @@ jobs:
 
       - name: Use cache
         id: cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/theos
           key: ${{ runner.os }}-${{ env.upstream_heads }}
@@ -47,7 +47,7 @@ jobs:
       #     make package FINALPACKAGE=1 SYSROOT=$THEOS/sdks/iPhoneOS16.5.sdk THEOS_PACKAGE_SCHEME=rootful
 
       - name: Upload package
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: "NetworkManagerReborn builds (${{ matrix.os }})"
           path: ${{ github.workspace }}/packages/*.deb
