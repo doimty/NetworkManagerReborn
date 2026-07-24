@@ -10,44 +10,80 @@ jobs:
         os: [macos-latest]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
 
-      - name: Check cache
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+
+      - name: Install packaging tools
         run: |
-          echo upstream_heads=`git ls-remote https://github.com/theos/theos | head -n 1 | cut -f 1`-`git ls-remote https://github.com/theos/sdks | head -n 1 | cut -f 1` >> $GITHUB_ENV
+          brew update
+          brew install dpkg ldid make
 
-      - name: Use cache
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ github.workspace }}/theos
-          key: ${{ runner.os }}-${{ env.upstream_heads }}
+      - name: Install Theos
+        env:
+          THEOS: ${{ github.workspace }}/theos
+        run: |
+          git clone --recursive https://github.com/roothide/theos.git "$THEOS"
 
-      - name: Prepare Theos
-        uses: Randomblock1/theos-action@v1
+      - name: Install Theos SDK with private frameworks
+        env:
+          THEOS: ${{ github.workspace }}/theos
+        run: |
+          git clone --depth 1 --filter=blob:none --sparse https://github.com/theos/sdks.git /tmp/theos-sdks
+          cd /tmp/theos-sdks
+          git sparse-checkout set iPhoneOS16.5.sdk
+          mkdir -p "$THEOS/sdks"
+          mv iPhoneOS16.5.sdk "$THEOS/sdks/"
 
       - name: Install CCSupport
+        env:
+          THEOS: ${{ github.workspace }}/theos
         run: |
           git clone https://github.com/opa334/CCSupportTemplates.git $HOME/CCSupportTemplates
           cd $HOME/CCSupportTemplates/
           chmod +x install.sh
           ./install.sh
           echo "Should be done installing CCSupport"
-      
+
       - name: Build package (rootless)
+        env:
+          THEOS: ${{ github.workspace }}/theos
+          THEOS_PACKAGE_SCHEME: rootless
+          FINALPACKAGE: 1
         run: |
-          rm -f packages/*
-          make package FINALPACKAGE=1 SYSROOT=$THEOS/sdks/iPhoneOS16.5.sdk THEOS_PACKAGE_SCHEME=rootless
+          rm -f packages/*.deb
+          make package SYSROOT=$THEOS/sdks/iPhoneOS16.5.sdk
 
-      # - name: Build package (rootful)
-      #   run: |
-      #     rm -f packages/*
-      #     make package FINALPACKAGE=1 SYSROOT=$THEOS/sdks/iPhoneOS16.5.sdk THEOS_PACKAGE_SCHEME=rootful
+      - name: Archive rootless packages
+        run: |
+          mkdir -p packages-rootless
+          mv packages/*.deb packages-rootless/
 
-      - name: Upload package
-        uses: actions/upload-artifact@v3
+      - name: Build package (roothide)
+        env:
+          THEOS: ${{ github.workspace }}/theos
+          THEOS_PACKAGE_SCHEME: roothide
+          FINALPACKAGE: 1
+        run: |
+          rm -f packages/*.deb
+          make package SYSROOT=$THEOS/sdks/iPhoneOS16.5.sdk
+
+      - name: Archive roothide packages
+        run: |
+          mkdir -p packages-roothide
+          mv packages/*.deb packages-roothide/ 2>/dev/null || true
+
+      - name: Upload rootless packages
+        uses: actions/upload-artifact@v4
         with:
-          name: "NetworkManagerReborn builds (${{ matrix.os }})"
-          path: ${{ github.workspace }}/packages/*.deb
+          name: "NetworkManagerReborn rootless"
+          path: ${{ github.workspace }}/packages-rootless/*.deb
+
+      - name: Upload roothide packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: "NetworkManagerReborn roothide"
+          path: ${{ github.workspace }}/packages-roothide/*.deb
