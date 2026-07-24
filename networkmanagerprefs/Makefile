@@ -9,15 +9,18 @@ BUNDLE_NAME = NetworkManagerPrefs
 NetworkManagerPrefs_FILES = CCNMRootListController.m
 NetworkManagerPrefs_INSTALL_PATH = /Library/PreferenceBundles
 NetworkManagerPrefs_FRAMEWORKS = UIKit
-NetworkManagerPrefs_PRIVATE_FRAMEWORKS = Preferences
 NetworkManagerPrefs_CFLAGS = -fobjc-arc
 
 NetworkManagerPrefs_CFLAGS += -DNETWORK_MANAGER_VERSION=\"$(VERSION)\"
 
+# For non-roothide: link to Preferences
+ifneq ($(THEOS_PACKAGE_SCHEME),roothide)
+NetworkManagerPrefs_PRIVATE_FRAMEWORKS = Preferences
+endif
+
 # For roothide: link roothide library, use -undefined dynamic_lookup instead of private frameworks
 ifeq ($(THEOS_PACKAGE_SCHEME),roothide)
 NetworkManagerPrefs_LIBRARIES = roothide
-NetworkManagerPrefs_PRIVATE_FRAMEWORKS =
 NetworkManagerPrefs_LDFLAGS += -undefined dynamic_lookup
 endif
 

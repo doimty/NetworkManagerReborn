@@ -7,17 +7,20 @@ BUNDLE_NAME = NetworkManager
 NetworkManager_BUNDLE_EXTENSION = bundle
 NetworkManager_FILES = CCNetworkManager.x
 NetworkManager_FRAMEWORKS = CoreTelephony
-NetworkManager_PRIVATE_FRAMEWORKS = ControlCenterUIKit
 NetworkManager_INSTALL_PATH = /Library/ControlCenter/Bundles/
 
 NetworkManager_CFLAGS += "-Wno-unused-function"
 NetworkManager_CFLAGS += "-Wno-unused-variable"
 NetworkManager_CFLAGS += "-Wno-error=objc-method-access"
 
+# For non-roothide: link to ControlCenterUIKit
+ifneq ($(THEOS_PACKAGE_SCHEME),roothide)
+NetworkManager_PRIVATE_FRAMEWORKS = ControlCenterUIKit
+endif
+
 # For roothide: link roothide library, use -undefined dynamic_lookup instead of private frameworks
 ifeq ($(THEOS_PACKAGE_SCHEME),roothide)
 NetworkManager_LIBRARIES = roothide
-NetworkManager_PRIVATE_FRAMEWORKS =
 NetworkManager_LDFLAGS += -undefined dynamic_lookup
 endif
 
