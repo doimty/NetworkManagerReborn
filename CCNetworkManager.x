@@ -72,7 +72,7 @@ NSString *selectedNetwork;
   _CTServerConnectionSetRATSelection(cn, kValue, 0);
 
   writeSelectedNetwork();
-  [self refreshState];
+  [super reconfigureView];
 }
 
 @end
