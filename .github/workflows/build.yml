@@ -38,16 +38,32 @@ jobs:
       
       - name: Build package (rootless)
         run: |
-          rm -f packages/*
+          rm -f packages/*.deb
           make package FINALPACKAGE=1 SYSROOT=$THEOS/sdks/iPhoneOS16.5.sdk THEOS_PACKAGE_SCHEME=rootless
 
-      # - name: Build package (rootful)
-      #   run: |
-      #     rm -f packages/*
-      #     make package FINALPACKAGE=1 SYSROOT=$THEOS/sdks/iPhoneOS16.5.sdk THEOS_PACKAGE_SCHEME=rootful
+      - name: Archive rootless packages
+        run: |
+          mkdir -p packages-rootless
+          mv packages/*.deb packages-rootless/
 
-      - name: Upload package
+      - name: Build package (roothide)
+        run: |
+          rm -f packages/*.deb
+          make package FINALPACKAGE=1 SYSROOT=$THEOS/sdks/iPhoneOS16.5.sdk THEOS_PACKAGE_SCHEME=roothide
+
+      - name: Archive roothide packages
+        run: |
+          mkdir -p packages-roothide
+          mv packages/*.deb packages-roothide/ 2>/dev/null || true
+
+      - name: Upload rootless packages
         uses: actions/upload-artifact@v4
         with:
-          name: "NetworkManagerReborn builds (${{ matrix.os }})"
-          path: ${{ github.workspace }}/packages/*.deb
+          name: "NetworkManagerReborn rootless"
+          path: ${{ github.workspace }}/packages-rootless/*.deb
+
+      - name: Upload roothide packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: "NetworkManagerReborn roothide"
+          path: ${{ github.workspace }}/packages-roothide/*.deb
