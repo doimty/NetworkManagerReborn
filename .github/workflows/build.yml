@@ -39,6 +39,8 @@ jobs:
           mv iPhoneOS16.5.sdk "$THEOS/sdks/"
 
       - name: Install CCSupport
+        env:
+          THEOS: ${{ github.workspace }}/theos
         run: |
           git clone https://github.com/opa334/CCSupportTemplates.git $HOME/CCSupportTemplates
           cd $HOME/CCSupportTemplates/
