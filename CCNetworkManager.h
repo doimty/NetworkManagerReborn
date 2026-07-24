@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import <rootless.h>
+#import <roothide.h>
 
 #import <ControlCenterUIKit/CCUIToggleModule.h>
 

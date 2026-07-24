@@ -1,5 +1,4 @@
 #import "CCNetworkManager.h"
-#import <roothide.h>
 
 NSMutableDictionary *prefs, *defaultPrefs;
 // For some reason if I declare the 3 values below as simple NSDictionaries/NSArray, they just crash w BAD_ACCESS
@@ -73,7 +72,7 @@ NSString *selectedNetwork;
   _CTServerConnectionSetRATSelection(cn, kValue, 0);
 
   writeSelectedNetwork();
-  [super reconfigureView];
+  [self refreshState];
 }
 
 @end
@@ -134,7 +133,7 @@ static NSString *getValue(NSString *key) {
 static void writeSelectedNetwork() {
   [prefs setObject:selectedNetwork forKey:@"selectedNetwork"];
   [prefs writeToFile:
-             jbroot(@"/var/mobile/Library/Preferences/me.nixuge.networkmanager.plist")
+             @"/var/mobile/Library/Preferences/me.nixuge.networkmanager.plist"
           atomically:YES];
 }
 
@@ -142,8 +141,8 @@ static void writeSelectedNetwork() {
 
 static void loadPrefs() {
   prefs = [[NSMutableDictionary alloc]
-      initWithContentsOfFile:jbroot(@"/var/mobile/Library/Preferences/"
-                             @"me.nixuge.networkmanager.plist")];
+      initWithContentsOfFile:@"/var/mobile/Library/Preferences/"
+                             @"me.nixuge.networkmanager.plist"];
   selectedNetwork = [[prefs objectForKey:@"selectedNetwork"]?: [defaultPrefs objectForKey:@"selectedNetwork"] stringValue];
 }
 
@@ -151,7 +150,7 @@ static void initPrefs() {
   // Copy the default preferences file when the actual preference file doesn't
   // exist
   NSString *path =
-      jbroot(@"/var/mobile/Library/Preferences/me.nixuge.networkmanager.plist");
+      @"/var/mobile/Library/Preferences/me.nixuge.networkmanager.plist";
   NSString *pathDefault =
       jbroot(@"/Library/PreferenceBundles/NetworkManagerPrefs.bundle/defaults.plist");
   NSFileManager *fileManager = [NSFileManager defaultManager];

@@ -1,10 +1,11 @@
 #import <Preferences/PSListController.h>
 #import <Preferences/PSSpecifier.h>
 
-// TO REMOVE - NEEDED FOR THE OLDABI CHECK ON SETTINGS OPEN
-#include "NSTask.h"
-// END TO REMOVE
-
+#if __has_include(<roothide.h>)
+#import <roothide.h>
+#else
+#define jbroot(path) (@path)
+#endif
 
 @interface CCNMRootListController : PSListController
 - (void)showHelpAlert:(PSSpecifier *)specifier;

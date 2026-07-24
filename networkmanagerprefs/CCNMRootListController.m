@@ -1,5 +1,4 @@
 #include "CCNMRootListController.h"
-#import <roothide.h>
 
 @implementation CCNMRootListController
 
@@ -27,43 +26,7 @@
     UIBarButtonItem *applyButton = [[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStylePlain target:self action:@selector(save)];
     self.navigationItem.rightBarButtonItem = applyButton;
 
-    // START DIRTY TEMPORARY CODE
-    NSString *dpkgQueryPath = jbroot(@"/usr/bin/dpkg-query");
-
-	NSTask *task = [[NSTask alloc] init];
-	[task setLaunchPath:dpkgQueryPath];
-	[task setArguments:@[@"-s", @"oldabi"]];
-	
-    NSPipe *pipe = [NSPipe pipe];
-    [task setStandardOutput:pipe];
-    [task setStandardError:pipe];
-
-    @try {
-        [task launch];
-        [task waitUntilExit];
-
-        // NSFileHandle *file = [pipe fileHandleForReading];
-        // NSData *data = [file readDataToEndOfFile];
-        // NSString *output = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        if ([task terminationStatus] == 0) {
-            NSString *message = @"Hi there !\n\n"
-                "It looks like you have oldabi (Legacy arm64e Support) installed.\n\n"
-                "This tweak was a requirement for NetworkManagerReborn until v1.3.0.\n"
-                "However, it's been known to cause instabilities (eg spinlocks).\n\n"
-                "As of v1.4.0 that requirement has been lifted, so you're free "
-                "to uninstall oldabi if no other tweaks depend on it.";
-            
-            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Legacy arm64e Support" message:message preferredStyle:UIAlertControllerStyleAlert];
-            UIAlertAction *dismissAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-
-            [alertController addAction:dismissAction];
-            [self presentViewController:alertController animated:YES completion:nil];
-        }
-    }
-    @catch (NSException *exception) {
-        // Do nothing
-    }
-    // END DIRTY TEMPORARY CODE
+    // As of the latest Dopamine version, an oldabi check should no longer be required as it's implemented into Dopamine now.
 }
 
 - (NSArray *)specifiers {
@@ -75,13 +38,13 @@
 }
 
 - (id)readPreferenceValue:(PSSpecifier*)specifier {
-	NSString *path = [NSString stringWithFormat:jbroot(@"/var/mobile/Library/Preferences/%@.plist"), specifier.properties[@"defaults"]];
+	NSString *path = [NSString stringWithFormat:@"/var/mobile/Library/Preferences/%@.plist", specifier.properties[@"defaults"]];
 	NSDictionary *settings = [NSDictionary dictionaryWithContentsOfFile:path];
 	return (settings[specifier.properties[@"key"]]) ?: specifier.properties[@"default"];
 }
 
 - (void)setPreferenceValue:(id)value specifier:(PSSpecifier*)specifier {
-	NSString *path = [NSString stringWithFormat:jbroot(@"/var/mobile/Library/Preferences/%@.plist"), specifier.properties[@"defaults"]];
+	NSString *path = [NSString stringWithFormat:@"/var/mobile/Library/Preferences/%@.plist", specifier.properties[@"defaults"]];
 	NSMutableDictionary *settings = [NSMutableDictionary dictionaryWithContentsOfFile:path];
 	[settings setObject:value forKey:specifier.properties[@"key"]];
 	[settings writeToFile:path atomically:YES];
