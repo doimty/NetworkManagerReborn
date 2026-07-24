@@ -15,7 +15,7 @@ NetworkManagerPrefs_CFLAGS += -DNETWORK_MANAGER_VERSION=\"$(VERSION)\"
 
 # For non-roothide: link to Preferences
 ifneq ($(THEOS_PACKAGE_SCHEME),roothide)
-NetworkManagerPrefs_PRIVATE_FRAMEWORKS = Preferences
+NetworkManagerPrefs_LDFLAGS += -framework Preferences
 endif
 
 # For roothide: link roothide library, use -undefined dynamic_lookup instead of private frameworks

@@ -15,7 +15,7 @@ NetworkManager_CFLAGS += "-Wno-error=objc-method-access"
 
 # For non-roothide: link to ControlCenterUIKit
 ifneq ($(THEOS_PACKAGE_SCHEME),roothide)
-NetworkManager_PRIVATE_FRAMEWORKS = ControlCenterUIKit
+NetworkManager_LDFLAGS += -framework ControlCenterUIKit
 endif
 
 # For roothide: link roothide library, use -undefined dynamic_lookup instead of private frameworks
