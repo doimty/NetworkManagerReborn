@@ -12,6 +12,7 @@ NetworkManager_INSTALL_PATH = /Library/ControlCenter/Bundles/
 
 NetworkManager_CFLAGS += "-Wno-unused-function"
 NetworkManager_CFLAGS += "-Wno-unused-variable"
+NetworkManager_CFLAGS += "-Wno-error=objc-method-access"
 
 # For roothide: link roothide library, use -undefined dynamic_lookup instead of private frameworks
 ifeq ($(THEOS_PACKAGE_SCHEME),roothide)
