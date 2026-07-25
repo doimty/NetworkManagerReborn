@@ -52,8 +52,9 @@ jobs:
         run: |
           git clone https://github.com/opa334/CCSupportTemplates.git "$HOME/CCSupportTemplates"
           git -C "$HOME/CCSupportTemplates" checkout ec20c982b3f74f2f0500a83761363384e92a0ca3
-          chmod +x "$HOME/CCSupportTemplates/install.sh"
-          "$HOME/CCSupportTemplates/install.sh"
+          cd "$HOME/CCSupportTemplates"
+          chmod +x install.sh
+          ./install.sh
 
       - name: Build clean roothide package
         run: |
