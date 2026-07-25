@@ -90,8 +90,8 @@ jobs:
             xcrun otool -L "$preferences"
           } | tee binary-evidence.txt
 
-          xcrun lipo -verify_arch arm64e "$control_center"
-          xcrun lipo -verify_arch arm64e "$preferences"
+          xcrun lipo "$control_center" -verify_arch arm64e
+          xcrun lipo "$preferences" -verify_arch arm64e
           xcrun otool -L "$control_center" | grep -q '@loader_path/.jbroot/usr/lib/libroothide.dylib'
           xcrun otool -L "$preferences" | grep -q '@loader_path/.jbroot/usr/lib/libroothide.dylib'
           ! xcrun otool -L "$control_center" | grep -q 'ControlCenterUIKit.framework'
