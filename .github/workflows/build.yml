@@ -61,7 +61,7 @@ jobs:
           FINALPACKAGE: 1
         run: |
           rm -f packages/*.deb
-          make package
+          make package SYSROOT=$THEOS/sdks/iPhoneOS16.5.sdk
 
       - name: Archive rootless packages
         run: |
